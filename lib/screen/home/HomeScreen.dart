@@ -10,6 +10,41 @@ class HomeScreen extends StatelessWidget {
   HomeController controller = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
+    showAlertDialog(BuildContext context) {
+      // set up the button
+      Widget okButton = FlatButton(
+        child: Text("OK"),
+        onPressed: () {
+          controller.searchUser();
+        },
+      );
+
+      Widget cancelButton = FlatButton(
+        child: Text("Cancel", style: TextStyle(color: Colors.red)),
+        onPressed: () {
+          Get.back();
+        },
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: Text("Search User / Employee"),
+        content: TextField(
+          controller: controller.search,
+          decoration: InputDecoration(hintText: "Search Employee Here"),
+        ),
+        actions: [cancelButton, okButton],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+
     SizeConfig().init(context);
     return Scaffold(
         appBar: AppBar(
@@ -18,9 +53,14 @@ class HomeScreen extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           ),
           actions: [
-            Icon(
-              Icons.search,
-              color: Colors.white,
+            GestureDetector(
+              onTap: () {
+                showAlertDialog(context);
+              },
+              child: Icon(
+                Icons.search,
+                color: Colors.white,
+              ),
             )
           ],
         ),
@@ -32,18 +72,22 @@ class HomeScreen extends StatelessWidget {
                 : Container(
                     width: SizeConfig.screenWidth,
                     height: SizeConfig.screenHeight,
-                    child: ListView(
-                      children: [
-                        for (var data in val.user)
-                          UserWidget(
-                            avatar: data.avatar,
-                            email: data.email,
-                            fname: data.firstName,
-                            lname: data.lastName,
-                            id: data.id,
+                    child: val.user.isEmpty
+                        ? Center(
+                            child: Text("User Not Found"),
                           )
-                      ],
-                    ),
+                        : ListView(
+                            children: [
+                              for (var data in val.user)
+                                UserWidget(
+                                  avatar: data.avatar,
+                                  email: data.email,
+                                  fname: data.firstName,
+                                  lname: data.lastName,
+                                  id: data.id,
+                                )
+                            ],
+                          ),
                   );
           },
         ),
