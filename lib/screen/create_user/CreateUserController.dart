@@ -15,12 +15,17 @@ class CreateUserController extends GetxController {
   void createUser() async {
     var res = await FetchData.createUser(job: job.text, name: name.text);
     if (res != null) {
-      Get.snackbar("success", "User Added id: ${res['id']}",
-          backgroundColor: Colors.green[700], colorText: Colors.white);
-      job.text = "";
-      name.text = "";
+      if (job.text.isEmpty || name.text.isEmpty) {
+        Get.snackbar("failed", "Field cannot be empty",
+            backgroundColor: Colors.red, colorText: Colors.white);
+      } else {
+        Get.snackbar("success", "User Added id: ${res['id']}",
+            backgroundColor: Colors.green[700], colorText: Colors.white);
+        job.text = "";
+        name.text = "";
+      }
     } else {
-      Get.snackbar("failed", "Field cannot be empty",
+      Get.snackbar("failed", "There's something wrong",
           backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
